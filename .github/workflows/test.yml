@@ -2,241 +2,265 @@ name: Test
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
   schedule:
     - cron: '20 11 * * 1'
   workflow_dispatch:
-    inputs:
-      conformance-version:
-        description: 'Conformance Suite Version (commit hash)'
-        required: false
 
 jobs:
-  audit:
-    name: NPM Audit (Production)
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: lts/hydrogen # 18
+          node-version: lts/*
           cache: 'npm'
-          check-latest: true
-      - name: Install dependencies
-        run: npm clean-install
-      - run: npm audit --production
+      - run: npm clean-install
+      - run: npm run build
 
-  test:
+  format:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ !startsWith(matrix.node-version, 'lts') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npm run format-check
+      - run: git diff --quiet
+
+  check-docs:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - format
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - uses: r-lib/actions/setup-pandoc@v2
+        with:
+          pandoc-version: latest
+      - run: npm run build
+      - run: npm run docs-check
+
+  node-versions:
+    uses: panva/.github/.github/workflows/node-versions.yml@main
+    with:
+      min: 20
+
+  node:
+    needs:
+      - node-versions
+      - build
     strategy:
       fail-fast: false
       matrix:
-        node-version:
-          - lts/erbium # 12
-          - lts/fermium # 14
-          - lts/gallium # 16
-          - lts/hydrogen # 18
-          - current
+        node-version: ${{ fromJSON(needs.node-versions.outputs.matrix) }}
+        suite:
+          - tap:node
+          - test
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@v3
-        id: node
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           check-latest: true
-      - name: Install dependencies
-        run: npm clean-install
-      - run: npm run test
-
-  electron:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        id: node
+      - run: npm clean-install
+      - name: Run Test Suite
+        run: npm run ${{ matrix.suite }}
+      - name: Upload server logs
+        if: ${{ failure() && matrix.suite == 'tap:node' }}
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
         with:
-          node-version: lts/hydrogen # 18
-          cache: 'npm'
-          check-latest: true
-      - name: Install dependencies
-        run: npm clean-install
-      - run: npx xvfb-maybe npx electron@latest ./test/electron test/**/*.test.js
+          path: server.log
+          name: node idx(${{ strategy.job-index }}) server log
+          if-no-files-found: warn
 
-  build-conformance-suite:
+  edge-runtime:
+    needs:
+      - build
     runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.cache-key.outputs.value }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set Conformance Suite Version from GitLab
-        if: ${{ !github.event.inputs.conformance-version }}
-        run: |
-          export VERSION=($(curl --silent "https://gitlab.com/api/v4/projects/4175605/releases" | jq -r '.[0].tag_name'))
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Set Conformance Suite Version from Workflow Dispatch
-        if: ${{ github.event.inputs.conformance-version }}
-        run: |
-          echo "VERSION=${{ github.event.inputs.conformance-version }}" >> $GITHUB_ENV
-      - id: cache-key
-        run: echo "value=suite-${{ hashFiles('.github/workflows/test.yml') }}-${{ env.VERSION }}" >> $GITHUB_OUTPUT
-      - name: Load Cached Conformance Suite Build
-        uses: actions/cache@v3
-        id: cache
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ./conformance-suite
-          key: ${{ steps.cache-key.outputs.value }}
-      - name: Conformance Suite Checkout
-        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-        run: git clone https://gitlab.com/openid/conformance-suite.git
-      - run: git reset --hard ${{ env.VERSION }}
-        working-directory: ./conformance-suite
-      - name: Conformance Suite Build
-        working-directory: ./conformance-suite
-        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-        env:
-          MAVEN_CACHE: ./m2
-        run: |
-          sed -i -e 's/localhost/localhost.emobix.co.uk/g' src/main/resources/application.properties
-          sed -i -e 's/-B clean/-B -DskipTests=true/g' builder-compose.yml
-          docker-compose -f builder-compose.yml run builder
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npm install --global edge-runtime
+      - run: npm link edge-runtime
+      - name: Run Test Suite
+        run: npm run tap:edge-runtime
+      - name: Upload server logs
+        if: ${{ failure() }}
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          path: server.log
+          name: edge-runtime server log
+          if-no-files-found: warn
 
-  conformance-suite:
-    runs-on: ubuntu-latest
+  electron:
     needs:
-      - audit
-      - test
-      - electron
-      - build-conformance-suite
-    env:
-      NODE_TLS_REJECT_UNAUTHORIZED: 0
-      DEBUG: runner,moduleId*
-      SUITE_BASE_URL: https://localhost.emobix.co.uk:8443
-      PLAN_NAME: ${{ matrix.setup.plan }}
-      VARIANT: ${{ toJSON(matrix.setup) }}
+      - build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npm install --global electron
+      - name: Run Test Suite
+        run: npm run tap:electron
+      - name: Upload server logs
+        if: ${{ failure() }}
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          path: server.log
+          name: electron server log
+          if-no-files-found: warn
+
+  deno:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - name: Run Test Suite
+        run: npm run tap:deno
+      - name: Upload server logs
+        if: ${{ failure() }}
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          path: server.log
+          name: deno server log
+          if-no-files-found: warn
+
+  workerd:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - run: npm install --global workerd
+      - run: npm link workerd
+      - name: Run Test Suite
+        run: npm run tap:workerd
+
+  bun:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - run: npm clean-install
+      - name: Run Test Suite
+        run: npm run tap:bun
+      - name: Upload server logs
+        if: ${{ failure() }}
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
+        with:
+          path: server.log
+          name: bun server log
+          if-no-files-found: warn
+
+  browsers:
+    needs:
+      - build
+    runs-on: ${{ matrix.runs-on || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
-        setup:
-          # OIDC BASIC
-          - plan: oidcc-client-basic-certification-test-plan
-
-          # OIDC IMPLICIT
-          - plan: oidcc-client-implicit-certification-test-plan
-
-          # OIDC HYBRID
-          - plan: oidcc-client-hybrid-certification-test-plan
-
-          # OIDC CONFIG
-          - plan: oidcc-client-config-certification-test-plan
-
-          # OIDC DYNAMIC
-          # TODO: work around the request_uri lodging service EOL
-          # - plan: oidcc-client-dynamic-certification-test-plan
-
-          # FAPI 1.0 ID-2
-          - plan: fapi-rw-id2-client-test-plan
-            client_auth_type: mtls
-          - plan: fapi-rw-id2-client-test-plan
-            client_auth_type: private_key_jwt
-
-          # FAPI 1.0 Advanced Final
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-            fapi_auth_request_method: pushed
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-            fapi_auth_request_method: pushed
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-            fapi_response_mode: jarm
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-            fapi_response_mode: jarm
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-            fapi_auth_request_method: pushed
-            fapi_response_mode: jarm
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-            fapi_auth_request_method: pushed
-            fapi_response_mode: jarm
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-            fapi_auth_request_method: pushed
-            fapi_response_mode: jarm
-            fapi_client_type: plain_oauth
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: mtls
-            fapi_response_mode: jarm
-            fapi_client_type: plain_oauth
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-            fapi_auth_request_method: pushed
-            fapi_response_mode: jarm
-            fapi_client_type: plain_oauth
-          - plan: fapi1-advanced-final-client-test-plan
-            client_auth_type: private_key_jwt
-            fapi_response_mode: jarm
-            fapi_client_type: plain_oauth
-
+        browser:
+          - name: chrome
+            id: chrome:headless
+          - name: firefox
+            id: firefox:headless
+          - name: edge
+            id: edge:headless
+        include:
+          - runs-on: macos-14
+            browser:
+              name: safari
+              id: safari
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set Conformance Suite Version
-        run: |
-          export VERSION=($(curl --silent "https://gitlab.com/api/v4/projects/4175605/releases" | jq -r '.[0].tag_name'))
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Load Cached Conformance Suite Build
-        uses: actions/cache@v3
-        id: cache
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          path: ./conformance-suite
-          key: ${{ needs.build-conformance-suite.outputs.cache-key }}
-      - name: Abort if Conformance Suite isn't cached
-        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-        uses: actions/github-script@v6
-        with:
-          script: |
-              core.setFailed('Conformance Suite cache hit failed')
-      - name: Run Conformance Suite
-        working-directory: ./conformance-suite
-        run: |
-          docker-compose -f docker-compose-dev.yml up -d
-          while ! curl -skfail https://localhost.emobix.co.uk:8443/api/runner/available >/dev/null; do sleep 2; done
-      - run: git clone --depth 1 --single-branch --branch main https://github.com/panva/openid-client-certification-suite.git runner
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/hydrogen # 18
+          node-version: lts/*
           cache: 'npm'
-          check-latest: true
       - run: npm clean-install
-        working-directory: ./runner
-      - run: npm install ${{ github.repository }}#${{ github.sha }}
-        working-directory: ./runner
-      - run: npm run test
-        working-directory: ./runner
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          path: runner/export-*.zip
-          name: ${{ matrix.setup.plan }} failed html results
-          if-no-files-found: ignore
+      - run: npm install --global testcafe@3
+      - name: Add rows to the TCC.db
+        if: ${{ matrix.runs-on == 'macos-14' }}
+        run: |
+          sudo sqlite3 "$HOME/Library/Application Support/com.apple.TCC/TCC.db" "INSERT OR REPLACE INTO access VALUES('kTCCServiceAppleEvents','com.devexpress.testcafe-browser-tools',0,2,3,1,X'fade0c0000000068000000010000000700000007000000080000001443fa4ca5141baeda21aeca1f50894673b440d4690000000800000014f8afcf6e69791b283e55bd0b03e39e422745770e0000000800000014bf4fc1aed64c871a49fc6bc9dd3878ce5d4d17c6',NULL,0,'com.apple.Safari',X'fade0c000000002c00000001000000060000000200000010636f6d2e6170706c652e53616661726900000003',NULL,1687952810,NULL,NULL,'UNUSED',1687952810);"
+          sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" "INSERT OR REPLACE INTO access VALUES('kTCCServiceScreenCapture','com.devexpress.testcafe-browser-tools',0,2,3,1,X'fade0c0000000068000000010000000700000007000000080000001443fa4ca5141baeda21aeca1f50894673b440d4690000000800000014f8afcf6e69791b283e55bd0b03e39e422745770e0000000800000014bf4fc1aed64c871a49fc6bc9dd3878ce5d4d17c6',NULL,0,'UNUSED',NULL,0,1687952810,NULL,NULL,'UNUSED',1687952810);"
+      - name: Run Test Suite
+        run: npm run tap:browsers
+        env:
+          BROWSER: ${{ matrix.browser.id }}
+      - name: Upload server logs
         if: ${{ failure() }}
-      - name: Upload test logs
-        uses: actions/upload-artifact@v3
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
         with:
+          path: server.log
+          name: ${{ matrix.browser.name }} server log
           if-no-files-found: warn
-          name: ${{ matrix.setup.plan }} runner logs
-          path: runner/logs/*.log
-        if: ${{ failure() }}

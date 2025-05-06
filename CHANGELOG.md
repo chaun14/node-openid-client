@@ -2,6 +2,343 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.5.0](https://github.com/panva/openid-client/compare/v6.4.2...v6.5.0) (2025-05-06)
+
+
+### Features
+
+* support response_type=id_token OIDC Authentication Responses ([94bba9d](https://github.com/panva/openid-client/commit/94bba9d7f7e6f1a2116fa20466be4811a7ee9cf3))
+
+
+### Fixes
+
+* handle POST method Request inputs for non-hybrid responses ([92faadc](https://github.com/panva/openid-client/commit/92faadc2a07af8f94889ef833ceae2dfdfe82352))
+
+
+### Documentation
+
+* add WWW-Authenticate parameter descriptions and RS Metadata related parameters ([38f3448](https://github.com/panva/openid-client/commit/38f3448d6cc761541e498afcd6cacc3e4a86657b))
+* update implicitAuthentication and authorizationCodeGrant inline examples ([b1f0a28](https://github.com/panva/openid-client/commit/b1f0a28e38d4a3015107609aeb127099176bc2e0))
+
+## [6.4.2](https://github.com/panva/openid-client/compare/v6.4.1...v6.4.2) (2025-04-10)
+
+
+### Documentation
+
+* add more resources for DCR ([e9b978d](https://github.com/panva/openid-client/commit/e9b978da4feb6396936262706f9b5b6c29653715))
+* hardcode spec revision links (e.g. final or errata) ([afef152](https://github.com/panva/openid-client/commit/afef152b9217a82c8b78c923b4ff64b38d5fdf20))
+
+
+### Fixes
+
+* properly handle a number of edge-cases in www-authenticate header parsing ([56f0ed1](https://github.com/panva/openid-client/commit/56f0ed18a5e4114d5835b6e5647816f4532fc25b))
+
+## [6.4.1](https://github.com/panva/openid-client/compare/v6.4.0...v6.4.1) (2025-04-03)
+
+
+### Fixes
+
+* allow client secret based auth factories to be used with DCR ([d125b30](https://github.com/panva/openid-client/commit/d125b30b062894924a484cdfa6f06c7b412b8fae))
+
+## [6.4.0](https://github.com/panva/openid-client/compare/v6.3.4...v6.4.0) (2025-04-03)
+
+
+### Features
+
+* add support for Dynamic Client Registration ([15f6953](https://github.com/panva/openid-client/commit/15f69538d6712ae90f03a425c8698ea3acfdf12d))
+
+
+### Fixes
+
+* handle max_age=0 in buildAuthorizationUrlWithJAR() ([5a5a7c9](https://github.com/panva/openid-client/commit/5a5a7c991f5d4dae83c17a8115c2c312d33cb661))
+
+## [6.3.4](https://github.com/panva/openid-client/compare/v6.3.3...v6.3.4) (2025-03-12)
+
+
+### Documentation
+
+* bump typedoc ([36e8714](https://github.com/panva/openid-client/commit/36e8714cdec666afa865c2dd7b49d4a983ee3083))
+
+
+### Refactor
+
+* use subpath export for JWE decryption dependency ([f8c39fc](https://github.com/panva/openid-client/commit/f8c39fc1bb517ccfdfc2445bce4cafac6807c676))
+
+## [6.3.3](https://github.com/panva/openid-client/compare/v6.3.2...v6.3.3) (2025-02-24)
+
+## [6.3.2](https://github.com/panva/openid-client/compare/v6.3.1...v6.3.2) (2025-02-24)
+
+
+### Documentation
+
+* improve docs for default client authentication ([3c9f0d9](https://github.com/panva/openid-client/commit/3c9f0d9f9eea9d94be699766d5d90fe41e9650b1)), closes [#761](https://github.com/panva/openid-client/issues/761)
+
+## [6.3.1](https://github.com/panva/openid-client/compare/v6.3.0...v6.3.1) (2025-02-20)
+
+
+### Refactor
+
+* **passport:** allow dpop handle to be retrieved with an async function ([4491f70](https://github.com/panva/openid-client/commit/4491f701058d1396f11ff14c70c6c7067a78bb65))
+* **passport:** bind authorization code to a DPoP Key ([b536d0a](https://github.com/panva/openid-client/commit/b536d0aa4ce083f8ea469e40f6ffda4cf30fcdcb))
+* **passport:** use the supportsPKCE() metadata helper ([e13fb37](https://github.com/panva/openid-client/commit/e13fb3730c5e1a8fb9cee1dbf2006e9c0f909382))
+
+## [6.3.0](https://github.com/panva/openid-client/compare/v6.2.0...v6.3.0) (2025-02-18)
+
+
+### Features
+
+* add a helper to DPoPHandle to calculate dpop_jkt ([e99a9d9](https://github.com/panva/openid-client/commit/e99a9d996e88c1ba486720c24d46325fb8bf288f))
+
+
+### Documentation
+
+* add DPoP example ([2fb51e1](https://github.com/panva/openid-client/commit/2fb51e1b53256c280f025710d174dc91a3ff077a))
+* reword buildAuthorizationUrl methods for more clarity ([7e987d9](https://github.com/panva/openid-client/commit/7e987d98bb8e9d77b01511ad661cb480a6b81fe3))
+* update CIBA docs ([35ff0f5](https://github.com/panva/openid-client/commit/35ff0f551a2b80cc1e1c5608aee8c66aed9e5d02))
+* update example diffs ([2e152d9](https://github.com/panva/openid-client/commit/2e152d9b4e84c58963fa374b1bfb620aae9d97b8))
+* update JWT Introspection Response references to RFC 9701 ([d742709](https://github.com/panva/openid-client/commit/d7427096198cd533f0eeaecea7c75ded29558801))
+* update README.md ([8dbb921](https://github.com/panva/openid-client/commit/8dbb921dfe7e88587ddff9b3cd8559e395a107d3))
+* update README.md ([546b651](https://github.com/panva/openid-client/commit/546b65120e22c60a37de68da797bff6631a7becd))
+
+## [6.2.0](https://github.com/panva/openid-client/compare/v6.1.7...v6.2.0) (2025-02-17)
+
+
+### Features
+
+* add Client-Initiated Backchannel Authentication ([fe6d996](https://github.com/panva/openid-client/commit/fe6d996f633181eaf7af771ac6a10662c806ebda))
+
+
+### Documentation
+
+* explain more discovery() behaviours ([271ac5b](https://github.com/panva/openid-client/commit/271ac5b0a4beeee5d3028bad2458cd5463f1bfc9))
+* re-run docs ([17b531a](https://github.com/panva/openid-client/commit/17b531a7ab0632ddb17ff58ad20a3519c52a20da))
+* update buildAuthorizationUrl parameters description ([23fb405](https://github.com/panva/openid-client/commit/23fb405f07707e81dae6da4dbf160061947f818d))
+* update buildAuthorizationUrl parameters description ([db9fd94](https://github.com/panva/openid-client/commit/db9fd94af4c10312597dbe4ea05d67d4eeb5b503))
+
+
+### Fixes
+
+* **types:** fix typo in DeviceAuthorizationGrantPollOptions ([d3629c9](https://github.com/panva/openid-client/commit/d3629c963953fd8b79f727563e5e558a3efc7d5a))
+
+## [6.1.7](https://github.com/panva/openid-client/compare/v6.1.6...v6.1.7) (2024-12-02)
+
+
+### Refactor
+
+* **types:** move customFetch options into its own interface ([57d8355](https://github.com/panva/openid-client/commit/57d8355b20f1e38a54a5d6581eb81abf8f59d3ba))
+
+## [6.1.6](https://github.com/panva/openid-client/compare/v6.1.5...v6.1.6) (2024-11-28)
+
+
+### Fixes
+
+* handle scope, prompt, and passReqToCallback from generic passport types ([cc92a36](https://github.com/panva/openid-client/commit/cc92a36a58b68b3d60914e1d6d7cba072e8151d0)), closes [#735](https://github.com/panva/openid-client/issues/735)
+
+## [6.1.5](https://github.com/panva/openid-client/compare/v6.1.4...v6.1.5) (2024-11-27)
+
+
+### Fixes
+
+* **passport:** fix currentUrl when using express.Router ([3b2d570](https://github.com/panva/openid-client/commit/3b2d570eb8bc385899147cdc39e3d4b10e611f00)), closes [#733](https://github.com/panva/openid-client/issues/733)
+
+## [6.1.4](https://github.com/panva/openid-client/compare/v6.1.3...v6.1.4) (2024-11-22)
+
+
+### Documentation
+
+* resolve discovery customFetch jsdoc mentioning timeout ([5f4cd1b](https://github.com/panva/openid-client/commit/5f4cd1bc3a23a63d36da8ea59879b5f86ce12501))
+
+## [6.1.3](https://github.com/panva/openid-client/compare/v6.1.2...v6.1.3) (2024-10-23)
+
+
+### Documentation
+
+* remove note from issuer transformation algorithm ([5fda2cb](https://github.com/panva/openid-client/commit/5fda2cb3b83ac7162babc56a113864fb58c34f49))
+
+
+### Fixes
+
+* deal with discovery issues from b2clogin.com ([b9a4f2f](https://github.com/panva/openid-client/commit/b9a4f2fe8844efaed5eba2b175d7daa6c662f264)), closes [#718](https://github.com/panva/openid-client/issues/718)
+
+## [6.1.2](https://github.com/panva/openid-client/compare/v6.1.1...v6.1.2) (2024-10-23)
+
+
+### Refactor
+
+* rename the parameters positional argument in authorizationCodeGrant() ([c79ccc5](https://github.com/panva/openid-client/commit/c79ccc52c9b7e2fa880e5c518a917c63e006038a)), closes [#712](https://github.com/panva/openid-client/issues/712)
+
+
+### Documentation
+
+* document behaviour of customFetch on discovery ([072da62](https://github.com/panva/openid-client/commit/072da62d10d522bc0fd68fabe3015bfa7fe2c42b))
+* update Strategy.prototype.currentUrl JSDoc ([46ea086](https://github.com/panva/openid-client/commit/46ea086dd5462700d0e5b45a6bb55afac7e2099f)), closes [#714](https://github.com/panva/openid-client/issues/714)
+
+## [6.1.1](https://github.com/panva/openid-client/compare/v6.1.0...v6.1.1) (2024-10-18)
+
+
+### Documentation
+
+* update link to passport example ([110575b](https://github.com/panva/openid-client/commit/110575b11e739b8acba9a241ff9db7c89505860a))
+
+
+### Fixes
+
+* correct supportsPKCE bool return ([f1aa9db](https://github.com/panva/openid-client/commit/f1aa9dbf304940061cb5efb350e68381b9887f9d)), closes [#710](https://github.com/panva/openid-client/issues/710)
+
+## [6.1.0](https://github.com/panva/openid-client/compare/v6.0.0...v6.1.0) (2024-10-17)
+
+
+### Features
+
+* add a server metadata helper for checking PKCE support ([ca34a91](https://github.com/panva/openid-client/commit/ca34a9171c4ba2ff3f5887cb472d9f90a9714462))
+* add JWKS Cache management for use in non-persistent runtimes ([cda4b53](https://github.com/panva/openid-client/commit/cda4b533b6ba259f935d09270ea36f516153ed94))
+
+## [6.0.0](https://github.com/panva/openid-client/compare/v5.7.0...v6.0.0) (2024-10-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* openid-client v6.x is a complete rewrite of the openid-client module, this is the first time since 0.1.0 (8 years ago) that the API has drastically changed. The new module structure and API focuses on three core principles:
+
+- runtime compatibility (adding support for Deno, Cloudflare Workers, Bun, and other Web API interoperable runtimes)
+- tree-shakeability (bundles should not contain features that don't end up being used)
+- less options (removing support for processing deprecated response types, cutting down on the number of combinations that need to handled)
+
+To that end openid-client@6 no longer supports the full cartesian matrix of response types and response modes, it no longer supports issuing encrypted assertions, decrypting assertions is limited to only a few algorithms, it no longer supports Dynamic Client Registration or Management, and Self-Issued OpenID Provider responses are also not supported.
+
+The new API makes basic setups simple while allowing some degree of complexity where needed.
+
+openid-client@6 is an ESM module using ES2022 syntax and it depends on WebCryptoAPI and Fetch API globals being available in the JS runtime.
+
+openid-client@6 is written in TypeScript and its exported types come with comment annotations.
+
+(Node.js) Versions 20.x and newer have all the necessary globals.
+
+(Node.js) CJS style `let client = require('openid-client')` is possible in versions where `process.features.require_module` is `true`. This is a new Node.js feature slated to be released without a CLI flag in 23.x and 22.x
+
+### Documentation
+
+* update ([3b7e09d](https://github.com/panva/openid-client/commit/3b7e09dd7f3019b416fd88579315dc38aa054c87))
+* update README.md ([d142984](https://github.com/panva/openid-client/commit/d1429841484e7055abe1d2806a90f9689da9e731))
+* update README.md ([13698a3](https://github.com/panva/openid-client/commit/13698a3553f909ec814b499bfdc0ae2362869602))
+
+
+### Refactor
+
+* openid-client@6 ([15890ff](https://github.com/panva/openid-client/commit/15890ff45a73a60243133dc674f4e9152481bd13))
+
+## [5.7.0](https://github.com/panva/node-openid-client/compare/v5.6.5...v5.7.0) (2024-09-09)
+
+
+### Features
+
+* add FAPI 2.0 support ([55b8a33](https://github.com/panva/node-openid-client/commit/55b8a33a90aff58e1017c0265ff1440845dc40c5))
+
+
+### Fixes
+
+* include DPoP Proof "htm" in requestResource if GET is defaulted to ([23f7b49](https://github.com/panva/node-openid-client/commit/23f7b499bc5b005c3ab29aa463ce20e4e6290b91))
+
+## [5.6.5](https://github.com/panva/node-openid-client/compare/v5.6.4...v5.6.5) (2024-03-07)
+
+
+### Refactor
+
+* avoid use of prototype attributes in keystore queries ([#660](https://github.com/panva/node-openid-client/issues/660)) ([47a549c](https://github.com/panva/node-openid-client/commit/47a549cb4e36ffe2ebfe2dc9d6b69a02643cc0a9))
+
+## [5.6.4](https://github.com/panva/node-openid-client/compare/v5.6.3...v5.6.4) (2024-01-06)
+
+## [5.6.3](https://github.com/panva/node-openid-client/compare/v5.6.2...v5.6.3) (2024-01-05)
+
+
+### Fixes
+
+* encode client_secret_basic - _ . ! ~ * ' ( ) characters ([5a2ea80](https://github.com/panva/node-openid-client/commit/5a2ea80ef5e59ec0c03dbd97d82f551e24a9d348))
+
+## [5.6.2](https://github.com/panva/node-openid-client/compare/v5.6.1...v5.6.2) (2023-12-22)
+
+
+### Refactor
+
+* issuer discovery ([#637](https://github.com/panva/node-openid-client/issues/637)) ([c228877](https://github.com/panva/node-openid-client/commit/c228877fb3c374a5c9322f73032d088c9a9cb686))
+
+
+### Fixes
+
+* add explicit Accept-Encoding header to http requests ([abcb564](https://github.com/panva/node-openid-client/commit/abcb56414848e5f3dc3bfd192e0edc920dc4ed7b)), closes [#648](https://github.com/panva/node-openid-client/issues/648)
+
+## [5.6.1](https://github.com/panva/node-openid-client/compare/v5.6.0...v5.6.1) (2023-10-11)
+
+
+### Fixes
+
+* consistent space encoding in authorizationUrl ([#627](https://github.com/panva/node-openid-client/issues/627)) ([ad68223](https://github.com/panva/node-openid-client/commit/ad6822333d713733655865e234290417ea59382b)), closes [#626](https://github.com/panva/node-openid-client/issues/626)
+
+## [5.6.0](https://github.com/panva/node-openid-client/compare/v5.5.0...v5.6.0) (2023-10-03)
+
+
+### Features
+
+* experimental Bun support ([a9d3a87](https://github.com/panva/node-openid-client/commit/a9d3a87d2727bb37a535aeac9da9851ffdef8613)), closes [#622](https://github.com/panva/node-openid-client/issues/622) [#623](https://github.com/panva/node-openid-client/issues/623)
+
+## [5.5.0](https://github.com/panva/node-openid-client/compare/v5.4.3...v5.5.0) (2023-09-08)
+
+
+### Features
+
+* **DPoP:** remove experimental warning, DPoP is now RFC9449 ([133a022](https://github.com/panva/node-openid-client/commit/133a022cce8e0d7a386b59163c18c100c80df2ab))
+
+## [5.4.3](https://github.com/panva/node-openid-client/compare/v5.4.2...v5.4.3) (2023-07-06)
+
+
+### Fixes
+
+* handle empty client_secret with basic and post client auth ([#610](https://github.com/panva/node-openid-client/issues/610)) ([402c711](https://github.com/panva/node-openid-client/commit/402c711fde93d5644c3b70861c462213bc87ab34)), closes [#609](https://github.com/panva/node-openid-client/issues/609)
+
+## [5.4.2](https://github.com/panva/node-openid-client/compare/v5.4.1...v5.4.2) (2023-04-25)
+
+
+### Fixes
+
+* bump oidc-token-hash ([20607e9](https://github.com/panva/node-openid-client/commit/20607e9eb72ea1dee0cfd714d66cd00285686f5f))
+
+## [5.4.1](https://github.com/panva/node-openid-client/compare/v5.4.0...v5.4.1) (2023-04-21)
+
+## [5.4.0](https://github.com/panva/node-openid-client/compare/v5.3.4...v5.4.0) (2023-02-05)
+
+
+### Features
+
+* allow third party initiated login requests to trigger strategy ([568709a](https://github.com/panva/node-openid-client/commit/568709abc786cc8e2d9c8de1543b0c488c284098)), closes [#510](https://github.com/panva/node-openid-client/issues/510) [#564](https://github.com/panva/node-openid-client/issues/564)
+
+## [5.3.4](https://github.com/panva/node-openid-client/compare/v5.3.3...v5.3.4) (2023-02-02)
+
+
+### Fixes
+
+* regression introduced in v5.3.3 ([4f6e847](https://github.com/panva/node-openid-client/commit/4f6e847f126ca531c73d37e1a756ab62f361f86a))
+
+## [5.3.3](https://github.com/panva/node-openid-client/compare/v5.3.2...v5.3.3) (2023-02-02)
+
+
+### Refactor
+
+* remove use of Node.js v8 builtin ([f1881bc](https://github.com/panva/node-openid-client/commit/f1881bc61d424df4576864d610d4840101b45631)), closes [#442](https://github.com/panva/node-openid-client/issues/442) [#475](https://github.com/panva/node-openid-client/issues/475) [#555](https://github.com/panva/node-openid-client/issues/555)
+
+## [5.3.2](https://github.com/panva/node-openid-client/compare/v5.3.1...v5.3.2) (2023-01-20)
+
+
+### Fixes
+
+* **passport:** ignore static state and nonce passed to Strategy() ([#556](https://github.com/panva/node-openid-client/issues/556)) ([43daff3](https://github.com/panva/node-openid-client/commit/43daff3d780d10d29e8ac8cd56b94d99aaa37986))
+
+## [5.3.1](https://github.com/panva/node-openid-client/compare/v5.3.0...v5.3.1) (2022-11-28)
+
+
+### Fixes
+
+* **typescript:** requestResource returns a Promise ([#546](https://github.com/panva/node-openid-client/issues/546)) ([8bc9519](https://github.com/panva/node-openid-client/commit/8bc9519d56a9759fedbad2418420f0c5b75f2455)), closes [#488](https://github.com/panva/node-openid-client/issues/488)
+
 ## [5.3.0](https://github.com/panva/node-openid-client/compare/v5.2.1...v5.3.0) (2022-11-09)
 
 

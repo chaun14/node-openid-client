@@ -1,0 +1,42 @@
+diff --git a/node_modules/typedoc-plugin-mdn-links/data/web-api.json b/node_modules/typedoc-plugin-mdn-links/data/web-api.json
+index e92381a..00f0cba 100644
+--- a/node_modules/typedoc-plugin-mdn-links/data/web-api.json
++++ b/node_modules/typedoc-plugin-mdn-links/data/web-api.json
+@@ -1,4 +1,37 @@
+ {
++	"OIDC": {
++		"url": "https://openid.net/specs/openid-connect-core-1_0-errata2.html"
++	},
++	"DPoP": {
++		"url": "https://www.rfc-editor.org/rfc/rfc9449.html"
++	},
++	"PAR": {
++		"url": "https://www.rfc-editor.org/rfc/rfc9126.html"
++	},
++	"JAR": {
++		"url": "https://www.rfc-editor.org/rfc/rfc9101.html"
++	},
++	"JARM": {
++		"url": "https://openid.net/specs/oauth-v2-jarm-final.html"
++	},
++	"Device Authorization Grant": {
++		"url": "https://www.rfc-editor.org/rfc/rfc8628.html"
++	},
++	"Client-Initiated Backchannel Authentication Grant": {
++		"url": "https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0-final.html"
++	},
++	"Resource Indicators": {
++		"url": "https://www.rfc-editor.org/rfc/rfc8707"
++	},
++	"Client Credentials Grant": {
++		"url": "https://datatracker.ietf.org/doc/html/rfc6749#section-4.4"
++	},
++	"Refresh Token Grant": {
++		"url": "https://datatracker.ietf.org/doc/html/rfc6749#section-6"
++	},
++	"Authorization Code Grant": {
++		"url": "https://datatracker.ietf.org/doc/html/rfc6749#section-4.1"
++	},
+ 	"ANGLE_instanced_arrays": {
+ 		"url": "https://developer.mozilla.org/docs/Web/API/ANGLE_instanced_arrays",
+ 		"inst": {
